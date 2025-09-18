@@ -1,4 +1,5 @@
 using Unity.Mathematics;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
 
@@ -16,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [Header("オン・オフの対象スポットライト")]
     public GameObject spotLight;//対象のスポットライト
 
-    bool jnDamage;//ダメージかどうかのフラグ管理
+    bool inDamage;//ダメージ中かどうかのフラグ管理
 
     //コンポーネント
     Rigidbody2D rbody;
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.gameState != GameState.playing) return;
         Move();//上下左右の入力値の取得
         angleZ = GetAngle();//その時の角度を変数angleZに反映
         Animation();//angleZを利用してアニメーション
@@ -47,6 +49,31 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (GameManager.gameState != GameState.playing) return;
+        
+            
+        
+        //ダメージフラグが立っている間
+        if (inDamage)
+        {
+            
+            //点滅演出
+            //Sinメソッドの角度情報にゲーム開始からに経過時間を与える
+            float val = Mathf.Sin(Time.time * 50);
+            if (val > 0)
+            {
+                //描画機能を有効
+                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            }
+            else
+            {
+                //描画機能を無効
+                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            }
+
+            //入力によるvelocityが入らないようにここでリターン
+            return;
+        }
         //入力状況に応じてPlayerを動かす
         rbody.linearVelocity = (new Vector2(axisH, axisV)).normalized * playerSpeed;
     }
@@ -95,7 +122,8 @@ public class PlayerController : MonoBehaviour
         {
             //ひとまずRunアニメを走らせる
             anime.SetBool("run", true);
-            //方角を決める パラメータdirection int 型
+
+            //angleZを利用して方角を決める パラメータdirection int 型
             //int型のdirection 下:0 上:1 右:2 左:それ以外
 
             if (angleZ > -135f && angleZ < -45f)//下方向
@@ -122,5 +150,66 @@ public class PlayerController : MonoBehaviour
         {
             anime.SetBool("run", false);//走るフラグをオフ
         }
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //ぶつかった相手がEnemyだったら
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            GetDamage(collision.gameObject);//ダメージ処理の開始
+        }
+    }
+    void GetDamage(GameObject enemy)
+    {
+        //ステータスがplayingでなければ何もせず終わり
+        if (GameManager.gameState != GameState.playing) return;
+
+        GameManager.playerHP--;//プレイヤーのHPを１減らす
+
+        if (GameManager.playerHP > 0)
+        {
+            //そこまでのプレイヤーの動きをいったんストップ
+            rbody.linearVelocity = Vector2.zero;
+
+            //プレイヤーと敵との差を取得し、方向を決める
+            Vector3 v = (transform.position - enemy.transform.position).normalized;
+
+            //決まった方向に押される
+            rbody.AddForce(v * 4, ForceMode2D.Impulse);
+
+            //点滅するためのフラグ
+            inDamage = true;
+
+            //時間差で0.25秒後に点滅フラグ解除
+            Invoke("DamageEnd", 0.25f);
+
+        }
+        else
+        {
+            //残HPが残っていなければゲームオーバー
+            //GameOver();
+
+
+        }
+
+    }
+    void DamageEnd()
+    {
+        inDamage = false;//点滅ダメージフラグを解除
+        gameObject.GetComponent<SpriteRenderer>().enabled = true;//プレイヤーを確実に表示
+    }
+    void GameOver()
+    {
+        //ゲームの状態を変える
+        GameManager.gameState = GameState.gameover;
+        //ゲームオーバー演出
+        GetComponent<CircleCollider2D>().enabled = false;//当たり判定の無効化
+        rbody.linearVelocity = Vector2.zero;//動きを止める
+        rbody.gravityScale =1.0f;//重力の復活
+        anime.SetTrigger("dead");//死亡のアニメクリップの発動
+        rbody.AddForce(new Vector2(0, 5),ForceMode2D.Impulse);//上に跳ね上げる
+        Destroy(gameObject, 1.0f);//1秒後に存在を消去
+
+
     }
 }
