@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5507353670768935012}
   - component: {fileID: 4917762867029382827}
   - component: {fileID: 1608170827680751382}
+  - component: {fileID: 6981035768788587514}
   m_Layer: 0
   m_Name: Drink
   m_TagString: Drink
@@ -123,8 +124,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.008069694, y: 0}
-  m_Radius: 0.2571845
+  m_Offset: {x: 0.008069694, y: -0.012368202}
+  m_Radius: 0.33386326
 --- !u!50 &1608170827680751382
 Rigidbody2D:
   serializedVersion: 5
@@ -152,3 +153,16 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &6981035768788587514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7281210583451529659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6590aa4eda2fdcc4eb080b673a15c869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemNum: 0
