@@ -8,6 +8,9 @@ public class RoomManager : MonoBehaviour
 
     public GameObject[] items = new GameObject[5]; //5つのアイテムプレハブの内訳
     public GameObject room; //ドアのプレハブ
+
+    public MessageData[] messages;//配置したドアに割り振る
+
     public GameObject dummyDoor; //ダミーのドアプレハブ
     public GameObject key; //キーのプレハブ
 
@@ -25,6 +28,7 @@ public class RoomManager : MonoBehaviour
         {
             StartKeysPosition(); //キーの初回配置
             StartItemsPosition(); //アイテムの初回配置
+            StartDoorsPosition();//ドアの初回配置
             positioned = true; //初回配置は済み
         }
     }
@@ -86,6 +90,45 @@ public class RoomManager : MonoBehaviour
 
             //生成したアイテムに識別番号を割り振っていく
 
+        }
+    }
+    void StartDoorsPosition()
+    {
+        //全スポットの取得
+        GameObject[] roomSpots = GameObject.FindGameObjectsWithTag("RoomSpot");
+
+        //出入口（鍵１～鍵３の３つの出入口）の分だけ繰り返し
+        for (int i = 0; i < doorsPositionNumber.Length; i++)
+        {
+            int rand;//ランダムな数の受け皿
+            bool unique;//重複していないかのフラグ
+            do
+            {
+                unique = true;//問題なければそのままループを抜ける予定
+                rand = Random.Range(1, (roomSpots.Length + 1));//一番からスポット数の番号をランダムで取得
+
+                //すでにランダムに取得した番号がどこかのスポットとして割り当てられていないか、doosPositionnumber配列の状況を全点検
+                foreach (int numbers in doorsPositionNumber)
+                {
+                    //取り出した情報とランダム番号が一致していたら重複していたということになる
+                    if (numbers == rand)
+                    {
+                        unique = false;//唯一のユニークなものではない
+                        break;
+                    }
+                }
+            } while (!unique);
+            //全スポットを見回りしてrandと同じスポットを探す
+            foreach (GameObject spots in roomSpots)
+            {
+                if (spots.GetComponent<RoomSpot>().spotNum == rand)
+                {
+                    //ルームを生成
+                    GameObject obj = Instantiate(room, spots.transform.position, Quaternion.identity);
+                    //何番スポットが選ばれたのかstatic変数に記憶していく
+                    doorsPositionNumber[i] = rand;
+                }
+            }
         }
     }
 
