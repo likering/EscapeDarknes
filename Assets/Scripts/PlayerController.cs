@@ -212,4 +212,9 @@ public class PlayerController : MonoBehaviour
 
 
     }
+    //スポットライトの入手フラグが立っていたらライトをつける
+    public void SpotLightCheck()
+    {
+        if(GameManager.hasSpotLight) spotLight.SetActive(true);
+    }
 }

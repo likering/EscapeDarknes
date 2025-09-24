@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    // 移動スピード
-    public float speed = 0.5f; // 反応距離
-    public float reactionDistance = 4.0f;
+   
+    public float speed = 0.5f;  // 移動スピード
+    public float reactionDistance = 4.0f;// 反応距離
     float axisH;                //横軸値(-1.0 ~ 0.0 ~ 1.0)
     float axisV;                //縦軸値(-1.0 ~ 0.0 ~ 1.0)
 
@@ -15,7 +15,7 @@ public class EnemyController : MonoBehaviour
     Animator animator;          //Animator
 
     bool isActive = false;      //アクティブフラグ
-    public int arrangeId = 0;   //配置の識別に使う
+    //public int arrangeId = 0;   //配置の識別に使う
 
 
     public bool onBarrier; //バリアにあたっているか

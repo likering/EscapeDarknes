@@ -23,7 +23,7 @@ public class RoomData : MonoBehaviour
     {
         //相手がプレイヤーなら
         if (collision.gameObject.CompareTag("Player"))
-            {
+        {
             ChangeScene();
         }
     }
@@ -43,8 +43,5 @@ public class RoomData : MonoBehaviour
         //もしも解錠されていたら子オブジェクトである変数doorは
         //非表示
         if (openedDoor) door.SetActive(false);
-
-
     }
-
 }
