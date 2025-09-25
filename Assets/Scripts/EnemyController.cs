@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-   
+
     public float speed = 0.5f;  // 移動スピード
     public float reactionDistance = 4.0f;// 反応距離
     float axisH;                //横軸値(-1.0 ~ 0.0 ~ 1.0)
@@ -89,8 +89,8 @@ public class EnemyController : MonoBehaviour
 
             animator.SetInteger("Direction", direction);
             // 移動するベクトルを作る
-            axisH = Mathf.Cos(rad) * speed;
-            axisV = Mathf.Sin(rad) * speed;
+            axisH = Mathf.Cos(rad);
+            axisV = Mathf.Sin(rad);
         }
 
     }
@@ -114,7 +114,7 @@ public class EnemyController : MonoBehaviour
         if (isActive)
         {
             // 移動
-            rbody.linearVelocity = new Vector2(axisH, axisV).normalized;
+            rbody.linearVelocity = (new Vector2(axisH, axisV).normalized) * speed;
         }
         else
         {

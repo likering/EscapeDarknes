@@ -23,6 +23,12 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rbody;
     Animator anime;
 
+    bool isViartual;//ヴァーチャルパッドを触っているかのフラグ
+
+    //足音判定
+    float footstepInterval = 0.3f; //足音間隔
+    float footstepTimer; //時間計測
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -41,15 +47,20 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.gameState != GameState.playing) return;
+        //
+        if (!(GameManager.gameState == GameState.playing || GameManager.gameState == GameState.ending)) return;
         Move();//上下左右の入力値の取得
         angleZ = GetAngle();//その時の角度を変数angleZに反映
         Animation();//angleZを利用してアニメーション
 
+        //足音
+        HandleFootsteps();
+
     }
     private void FixedUpdate()
     {
-        if (GameManager.gameState != GameState.playing) return;
+        //
+        if (!(GameManager.gameState == GameState.playing || GameManager.gameState == GameState.ending)) return;
         
             
         
@@ -80,9 +91,14 @@ public class PlayerController : MonoBehaviour
     //上下左右の入力値の取得
     public void Move()
     {
-        //axisHとaxisVに入力状況を代入する
-        axisH = Input.GetAxisRaw("Horizontal");
-        axisV = Input.GetAxisRaw("Vertical");
+        if (!isViartual)//ヴァーチャルパッドを触っていないのであれば
+        {
+
+            //axisHとaxisVに入力状況を代入する
+            axisH = Input.GetAxisRaw("Horizontal");
+            axisV = Input.GetAxisRaw("Vertical");
+
+        }
     }
     //その時のプレイヤーの角度を取得
     public float GetAngle()
@@ -164,6 +180,8 @@ public class PlayerController : MonoBehaviour
         //ステータスがplayingでなければ何もせず終わり
         if (GameManager.gameState != GameState.playing) return;
 
+
+        SoundManager.instance.SEPlay(SEType.Damage);//ダメージを受ける音
         GameManager.playerHP--;//プレイヤーのHPを１減らす
 
         if (GameManager.playerHP > 0)
@@ -187,7 +205,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             //残HPが残っていなければゲームオーバー
-            //GameOver();
+            GameOver();
 
 
         }
@@ -216,5 +234,39 @@ public class PlayerController : MonoBehaviour
     public void SpotLightCheck()
     {
         if(GameManager.hasSpotLight) spotLight.SetActive(true);
+    }
+
+    //ヴァーチャルパッド」の入力に反応するメソッド
+    public void SetAxis(float virH, float virV)
+    {
+        if(virH !=0 || virV !=0)
+        {
+            isViartual = true;
+            axisH = virH;
+            axisV = virV;
+        }
+        else//ヴァーチャルパッドが触られていない（引数が両方０）
+        {
+            isViartual=false;
+        }
+    }
+    //足音
+    void HandleFootsteps()
+    {
+        //プレイヤーが動いていれば
+        if (axisH != 0 || axisV != 0)
+        {
+            footstepTimer += Time.deltaTime; //時間計測
+
+            if (footstepTimer >= footstepInterval) //インターバルチェック
+            {
+                SoundManager.instance.SEPlay(SEType.Walk);
+                footstepTimer = 0;
+            }
+        }
+        else //動いていなければ時間計測リセット
+        {
+            footstepTimer = 0f;
+        }
     }
 }

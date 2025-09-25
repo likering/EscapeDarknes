@@ -8,9 +8,9 @@ public class RoomManager : MonoBehaviour
     public static int[] itemsPositionNumber = { 0, 0, 0, 0, 0 }; //アイテムの配置番号
 
     public GameObject[] items = new GameObject[5]; //5つのアイテムプレハブの内訳
-    public GameObject room; //ドアのプレハブ
 
-    public MessageData[] messages;//配置したドアに割り振る
+    public GameObject room; //ドアのプレハブ
+    public MessageData[] messages; //配置したドアに割り振るScriptableObject
 
     public GameObject dummyDoor; //ダミーのドアプレハブ
     public GameObject key; //キーのプレハブ
@@ -29,17 +29,17 @@ public class RoomManager : MonoBehaviour
         {
             StartKeysPosition(); //キーの初回配置
             StartItemsPosition(); //アイテムの初回配置
-            StartDoorsPosition();//ドアの初回配置
+            StartDoorsPosition(); //ドアの初回配置
             positioned = true; //初回配置は済み
         }
-        else//初回配置済みだった場合は配置を再現
+        else //初期配置済みだった場合は配置を再現
         {
-            LoadKeysPosition();
-            LoadItemsPosition();
-            LoadDoorsPosition();
+            LoadKeysPosition(); //キーの配置の再現
+            LoadItemsPosition(); //アイテムの配置の再現
+            LoadDoorsPosition(); //ドアの配置の再現
 
+            PlayerPosition(); //プレイヤーの配置
         }
-
     }
 
     void StartKeysPosition()
@@ -69,14 +69,14 @@ public class RoomManager : MonoBehaviour
 
         //Key2スポットの取得
         keySpot = GameObject.FindGameObjectWithTag("KeySpot2");
-        //Keyの生成とobjへの格納
+        //Keyの生成とonjへの格納
         obj = Instantiate(key, keySpot.transform.position, Quaternion.identity);
         //生成したKeyのタイプをkey2に変更
         obj.GetComponent<KeyData>().keyType = KeyType.key2;
 
         //Key3スポットの取得
         keySpot = GameObject.FindGameObjectWithTag("KeySpot3");
-        //Keyの生成とobjへの格納
+        //Keyの生成とonjへの格納
         obj = Instantiate(key, keySpot.transform.position, Quaternion.identity);
         //生成したKeyのタイプをkey3に変更
         obj.GetComponent<KeyData>().keyType = KeyType.key3;
@@ -91,27 +91,25 @@ public class RoomManager : MonoBehaviour
         {
             //ランダムな数字の取得
             //※ただしアイテム割り振り済みの番号を引いたら、ランダム引き直し
-
-            int rand;//ランダムな数字の取得
-            bool unique;//重複していないかのフラグ
+            int rand; //ランダムな数の受け皿
+            bool unique; //重複していないかのフラグ
 
             do
             {
-                unique = true;//問題なければそのままループを抜ける予定
-                rand = Random.Range(1, (itemSpots.Length + 1));//一番からスポット数の番号をランダムで取得
+                unique = true; //問題なければそのままループを抜ける予定
+                rand = Random.Range(1, (itemSpots.Length + 1)); //1番からスポット数の番号をランダムで取得
 
-                //すでにランダムに取得した番号がどこかのスポットとして割り当てられていないか、doosPositionnumber配列の状況を全点検
+                //すでにランダムに取得した番号がどこかのスポットとして割り当てられていないか、doorsPositionNumber配列の状況を全点検
                 foreach (int numbers in itemsPositionNumber)
                 {
-                    //取り出した情報とランダム番号が一致していたら重複していたということになる
+                    //取り出した情報とランダム番号が一致していたら重複したいたということになる
                     if (numbers == rand)
                     {
-                        unique = false;//唯一のユニークなものではない
+                        unique = false; //唯一のユニークなものではない
                         break;
                     }
                 }
             } while (!unique);
-
 
             //スポットの全チェック（ランダム値とスポット番号の一致）
             //一致していれば、そこにアイテムを生成
@@ -132,46 +130,46 @@ public class RoomManager : MonoBehaviour
                     if (obj.CompareTag("Bill"))
                     {
                         obj.GetComponent<BillData>().itemNum = i;
-
                     }
                     else
                     {
                         obj.GetComponent<DrinkData>().itemNum = i;
                     }
-
                 }
             }
 
         }
     }
+
     void StartDoorsPosition()
     {
         //全スポットの取得
         GameObject[] roomSpots = GameObject.FindGameObjectsWithTag("RoomSpot");
 
-        //出入口（鍵１～鍵３の３つの出入口）の分だけ繰り返し
+        //出入り口(鍵1～鍵3の3つの出入り口）の分だけ繰り返し
         for (int i = 0; i < doorsPositionNumber.Length; i++)
         {
-            int rand;//ランダムな数の受け皿
-            bool unique;//重複していないかのフラグ
+            int rand; //ランダムな数の受け皿
+            bool unique; //重複していないかのフラグ
+
             do
             {
-                unique = true;//問題なければそのままループを抜ける予定
-                rand = Random.Range(1, (roomSpots.Length + 1));//一番からスポット数の番号をランダムで取得
+                unique = true; //問題なければそのままループを抜ける予定
+                rand = Random.Range(1, (roomSpots.Length + 1)); //1番からスポット数の番号をランダムで取得
 
-                //すでにランダムに取得した番号がどこかのスポットとして割り当てられていないか、doosPositionnumber配列の状況を全点検
+                //すでにランダムに取得した番号がどこかのスポットとして割り当てられていないか、doorsPositionNumber配列の状況を全点検
                 foreach (int numbers in doorsPositionNumber)
                 {
                     //取り出した情報とランダム番号が一致していたら重複していたということになる
                     if (numbers == rand)
                     {
-                        unique = false;//唯一のユニークなものではない
+                        unique = false; //唯一のユニークなものではない
                         break;
                     }
                 }
             } while (!unique);
 
-            //全スポットを見回りしてrandと同じスポットを探す
+            //全スポットを見回りしてrandと同じのスポットを探す
             foreach (GameObject spots in roomSpots)
             {
                 if (spots.GetComponent<RoomSpot>().spotNum == rand)
@@ -186,43 +184,45 @@ public class RoomManager : MonoBehaviour
                     //何番スポットが選ばれたのかstatic変数に記憶していく
                     doorsPositionNumber[i] = rand;
 
+                    //生成したドアのセッティング
                     DoorSetting(
-                        obj,//対象オブジェクト
-                        "fromRoom" + (i + 1),//生成したドアの識別名
-                        "Room" + (i + 1),//そこの出入口に触れたときどこに行くのか
-                        "Main",//行先となるシーン名
-                        false,//ドアの開錠の状況
-                        DoorDirection.down,//この出入口に戻った時のプレイヤーの位置
+                        obj, //対象オブジェクト
+                        "fromRoom" + (i + 1), //生成したドアの識別名
+                        "Room" + (i + 1), //そこの出入り口に触れたときどこに行くのか
+                        "Main", //行き先となるシーン名
+                        false, //ドアの開錠の状況
+                        DoorDirection.down, //この出入り口に戻った時のプレイヤーの配置
                         messages[i]
                         );
                 }
             }
         }
+
         //ダミー扉の生成
         foreach (GameObject spots in roomSpots)
         {
-            //既に配置済みかどうか
-            bool macth = false;
+            //すでに配置済みかどうか
+            bool match = false;
+
             foreach (int doorsNum in doorsPositionNumber)
             {
                 if (spots.GetComponent<RoomSpot>().spotNum == doorsNum)
                 {
-                    macth = true;//そのスポット番号には既に配置済み
+                    match = true; //そのスポット番号にはすでに配置済み
                     break;
                 }
-
             }
-            //数字がマッチしていなければこれまでも何も配置されていないということなのでダミードアを配置
-            if (!macth) Instantiate
-                (dummyDoor,spots.transform.position, Quaternion.identity);
+
+            //数字がマッチしていなければこれまで何も配置されていないということなのでダミードアを配置
+            if (!match) Instantiate(dummyDoor, spots.transform.position, Quaternion.identity);
         }
 
     }
+
     //生成したドアのセッティング
     void DoorSetting(GameObject obj, string roomName, string nextRoomName, string sceneName, bool openedDoor, DoorDirection direction, MessageData message)
     {
         RoomData roomData = obj.GetComponent<RoomData>();
-        roomData.roomName = roomName;
         //第一引数に指定したオブジェクトのRoomDataスクリプトの各変数に
         //第二引数以降で指定した値を代入
         roomData.roomName = roomName;
@@ -232,66 +232,63 @@ public class RoomManager : MonoBehaviour
         roomData.direction = direction;
         roomData.message = message;
 
-        roomData.DoorOpenCheck();//ドアの開閉状況フラグをみてドアを表示、非表示メソッド
-
+        roomData.DoorOpenCheck(); //ドアの開閉状況フラグをみてドアを表示/非表示メソッド
     }
 
     void LoadKeysPosition()
     {
-        //key1が未取得だったら
+        //Key1が未取得だったら
         if (!GameManager.keysPickedState[0])
         {
-            GameObject[] keySpots =
-                GameObject.FindGameObjectsWithTag
-                ("KeSpot");
+            //全Key1スポットの取得
+            GameObject[] keySpots = GameObject.FindGameObjectsWithTag("KeySpot");
 
             //全スポットを順番に点検
-            foreach (GameObject Spots in keySpots)
+            foreach (GameObject spots in keySpots)
             {
                 //記録しているスポットNOと一緒かどうか
-                if (Spots.GetComponent<KeySpot>().
-                    spotNum == key1PositionNumber)
+                if (spots.GetComponent<KeySpot>().spotNum == key1PositionNumber)
                 {
-                    //key1の作成
+                    //Key1の生成
                     Instantiate(
                         key,
-                        Spots.transform.position,
+                        spots.transform.position,
                         Quaternion.identity
                         );
                 }
             }
         }
-        //key2が未取得だったら
+
+        //Key2が未取得だったら
         if (!GameManager.keysPickedState[1])
         {
-            //key2スポットの取得
-            GameObject keySpot2 =
-                GameObject.FindGameObjectWithTag
-                ("KeySpot2");
-            //keyの生成
+            //Key2スポットの取得
+            GameObject keySpot2 = GameObject.FindGameObjectWithTag("KeySpot2");
+            //Keyの生成
             GameObject obj = Instantiate(
                 key,
                 keySpot2.transform.position,
                 Quaternion.identity
                 );
+            //生成したKeyのタイプを変えておく
             obj.GetComponent<KeyData>().keyType = KeyType.key2;
         }
-        //生成したkeyのタイプを変えておく
+
+        //Key3が未取得だったら
         if (!GameManager.keysPickedState[2])
         {
-            //key3が未取得だったら
-            GameObject keySpot3 =
-                GameObject.FindGameObjectWithTag
-                ("KeySpot3");
-            //key3スポットの取得
+            //Key3スポットの取得
+            GameObject keySpot3 = GameObject.FindGameObjectWithTag("KeySpot3");
+            //Keyの生成
             GameObject obj = Instantiate(
                 key,
                 keySpot3.transform.position,
                 Quaternion.identity
                 );
-            //生成したkeyのタイプを変えておく
+            //生成したKeyのタイプを変えておく
             obj.GetComponent<KeyData>().keyType = KeyType.key3;
         }
+
     }
 
     void LoadItemsPosition()
@@ -301,9 +298,8 @@ public class RoomManager : MonoBehaviour
 
         for (int i = 0; i < items.Length; i++)
         {
-            if (GameManager.itemsPickedState[i])
+            if (!GameManager.itemsPickedState[i])
             {
-
                 //スポットの全チェック（ランダム値とスポット番号の一致）
                 //一致していれば、そこにアイテムを生成
                 foreach (GameObject spots in itemSpots)
@@ -316,22 +312,19 @@ public class RoomManager : MonoBehaviour
                             Quaternion.identity
                             );
 
-                        itemsPositionNumber[i] = itemsPositionNumber[i];
-
                         //生成したアイテムに識別番号を割り振っていく
                         if (obj.CompareTag("Bill"))
                         {
                             obj.GetComponent<BillData>().itemNum = i;
-
                         }
                         else
                         {
                             obj.GetComponent<DrinkData>().itemNum = i;
                         }
                     }
-
                 }
             }
+
         }
     }
 
@@ -340,10 +333,9 @@ public class RoomManager : MonoBehaviour
         //全スポットの取得
         GameObject[] roomSpots = GameObject.FindGameObjectsWithTag("RoomSpot");
 
-        //出入口（鍵１～鍵３の３つの出入口）の分だけ繰り返し
+        //出入り口(鍵1～鍵3の3つの出入り口）の分だけ繰り返し
         for (int i = 0; i < doorsPositionNumber.Length; i++)
         {
-
             //全スポットを見回りして記録された番号と同じスポットを探す
             foreach (GameObject spots in roomSpots)
             {
@@ -358,32 +350,64 @@ public class RoomManager : MonoBehaviour
 
                     //生成したドアのセッティング
                     DoorSetting(
-                        obj,//対象オブジェクト
-                        "fromRoom" + (i + 1),//生成したドアの識別名
-                        "Room" + (i + 1),//そこの出入口に触れたときどこに行くのか
-                        "Main",//行先となるシーン名
-                        GameManager.doorsOpenedState[i],//ドアの開錠の状況をstaticから読み取る
-                        DoorDirection.down,//この出入口に戻った時のプレイヤーの位置
+                        obj, //対象オブジェクト
+                        "fromRoom" + (i + 1), //生成したドアの識別名
+                        "Room" + (i + 1), //そこの出入り口に触れたときどこに行くのか
+                        "Main", //行き先となるシーン名
+                        GameManager.doorsOpenedState[i], //ドアの開錠の状況をstaticから読み取る
+                        DoorDirection.down, //この出入り口に戻った時のプレイヤーの配置
                         messages[i]
                         );
                 }
             }
-            //ダミー扉の生成
-            foreach (GameObject spots in roomSpots)
-            {
-                //既に配置済みかどうか
-                bool macth = false;
-                foreach (int doorsNum in doorsPositionNumber)
-                {
-                    if (spots.GetComponent<RoomSpot>().spotNum == doorsNum)
-                    {
-                        macth = true;//
-                        break;
-                    }
+        }
 
+        //ダミー扉の生成
+        foreach (GameObject spots in roomSpots)
+        {
+            //すでに配置済みかどうか
+            bool match = false;
+
+            foreach (int doorsNum in doorsPositionNumber)
+            {
+                if (spots.GetComponent<RoomSpot>().spotNum == doorsNum)
+                {
+                    match = true; //そのスポット番号にはすでに配置済み
+                    break;
                 }
-                if (!macth) Instantiate
-                    (dummyDoor,spots.transform.position, Quaternion.identity);
+            }
+
+            //数字がマッチしていなければこれまで何も配置されていないということなのでダミードアを配置
+            if (!match) Instantiate(dummyDoor, spots.transform.position, Quaternion.identity);
+        }
+    }
+
+    //Playerの配置
+    void PlayerPosition()
+    {
+        //全Roomオブジェクトの取得
+        GameObject[] roomDatas = GameObject.FindGameObjectsWithTag("Room");
+
+        foreach (GameObject room in roomDatas)
+        {
+            //それぞれのRoomのRoomDataスクリプトの情報を変数rに代入
+            RoomData r = room.GetComponent<RoomData>();
+
+            //取得してきたRoomの識別名が「今目標にしている行先」の識別名(static変数)と同じなら
+            if (r.roomName == toRoomNumber)
+            {
+                float posY = 1.5f; //最初は対象となるRoomの上座標
+                if (r.direction == DoorDirection.down)
+                {
+                    posY = -1.5f; //もしdirectionがdown設定のRoomならプレイヤーの位置は下側になる
+                }
+
+                //プレイヤーの位置を決める
+                player.transform.position = new Vector2(
+                    room.transform.position.x,
+                    room.transform.position.y + posY
+                    );
+                break; //目的のRoomが見つかって、チェックの必要性がなくなったのでforeachを中断
             }
         }
     }
