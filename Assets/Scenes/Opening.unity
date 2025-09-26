@@ -289,7 +289,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   message: {fileID: 11400000, guid: cbb3164dbbc4ab8469df3ce0b236e9c4, type: 2}
   messageText: {fileID: 126586546}
-  isEnding: 0
+  isEnding: 1
 --- !u!114 &365696895
 MonoBehaviour:
   m_ObjectHideFlags: 0
