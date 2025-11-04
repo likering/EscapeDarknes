@@ -4,3 +4,4 @@
 
 ![EscapeDarkness](https://github.com/user-attachments/assets/46ea961d-9fca-46fe-81b0-2b14eb695eae)
 
+[ゲームサンプル](https://likering.github.io/EscapeDarknes_web/)
